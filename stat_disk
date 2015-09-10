@@ -1,0 +1,13 @@
+#!/bin/bash
+
+SSH="/usr/bin/ssh"
+AWK="/usr/bin/awk"
+GREP="/usr/bin/grep"
+USER="zabbix"
+COMMAND="lsmdiskgrp"
+VAR1="$1"
+VAR2="$2"
+
+stat_disk=$($SSH $USER@$VAR1 "$COMMAND" | $AWK '{print $'$VAR2'}' | $GREP -n ^ | $GREP ^2 | cut -d: -f2)
+echo ${stat_disk%TB*}
+

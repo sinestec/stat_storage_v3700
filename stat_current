@@ -1,0 +1,14 @@
+#!/bin/bash
+
+SSH="/usr/bin/ssh"
+AWK="/usr/bin/awk"
+GREP="/usr/bin/grep"
+
+IP="$1"
+USER="zabbix"
+COMMAND="lssystemstats"
+VAR1="$2"
+
+stat_current=$($SSH $USER@$IP "$COMMAND" | $GREP "$VAR1" | $AWK '{print $2}')
+echo $stat_current
+
