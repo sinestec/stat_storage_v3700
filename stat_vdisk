@@ -1,0 +1,26 @@
+#!/bin/bash
+
+SSH="/usr/bin/ssh"
+AWK="/usr/bin/awk"
+GREP="/usr/bin/grep"
+REV="/bin/rev"
+CUT="/bin/cut"
+BC="/bin/bc"
+COMMAND="lssevdiskcopy"
+USER="zabbix"
+VAR1="$1"
+VAR2="$2"
+VAR3="$3"
+
+#count=$(ssh 10.10.10.37 lssevdiskcopy | wc -l)
+#i=2
+
+#while [ $i -le $count ] 
+#do
+#	echo $i
+#	i=`expr $i + 1`
+#done
+
+stat_vdisk=$($SSH $USER@$VAR1 "$COMMAND" | $GREP -n ^ | $GREP ^$VAR2 | $AWK '{print $'$VAR3'}')
+#echo ${stat_vdisk} | $REV | $CUT -c 3- | $REV | $BC
+echo $stat_vdisk

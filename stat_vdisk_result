@@ -1,0 +1,50 @@
+#!/bin/bash
+
+SSH="/usr/bin/ssh"
+AWK="/usr/bin/awk"
+GREP="/usr/bin/grep"
+REV="/bin/rev"
+CUT="/bin/cut"
+BC="/bin/bc"
+COMMAND="lssevdiskcopy"
+USER="zabbix"
+VAR1="$1"
+VAR2="$2"
+VAR3="$3"
+
+stat_capacity=$($SSH $USER@$VAR1 "$COMMAND" | $GREP -n ^ | $GREP ^$VAR2 | $AWK '{print $6'})
+stat_realcapacity=$($SSH $USER@$VAR1 "$COMMAND" | $GREP -n ^ | $GREP ^$VAR2 | $AWK '{print $8'})
+valida1=`echo ${stat_capacity} | $REV | $CUT -c 1-2`
+valida2=`echo ${stat_realcapacity} | $REV | $CUT -c 1-2`
+
+if [ $valida1 == 'BG' ]
+then
+	stat_capacity="0".${stat_capacity%.*}
+else
+	stat_capacity=${stat_capacity%TB*}
+fi
+
+if [ $valida2 == 'BG' ]
+then
+        stat_realcapacity="0".${stat_realcapacity%.*}
+else
+	stat_realcapacity=${stat_realcapacity%TB*}
+fi
+
+if [ $stat_realcapacity \> $stat_capacity ]
+then
+	result=$(echo "scale=2; (($stat_realcapacity - $stat_capacity))" | bc)
+else
+	result=$(echo "scale=2; (($stat_capacity - $stat_realcapacity))" | bc)
+fi
+
+tamanho=$( echo $result | wc -c)
+
+if [ $tamanho -le 4 ]
+then
+	echo "0"$result"0"
+else
+	echo $result"0"
+fi
+
+

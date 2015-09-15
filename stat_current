@@ -1,7 +1,9 @@
 #!/bin/bash
 
+SSHPASS="/usr/bin/sshpass"
 SSH="/usr/bin/ssh"
 AWK="/usr/bin/awk"
+SUDO="/usr/bin/sudo"
 GREP="/usr/bin/grep"
 
 IP="$1"
